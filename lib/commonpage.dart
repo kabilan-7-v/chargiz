@@ -1,3 +1,4 @@
+import 'package:chargiz/Page/HomePage/home_page.dart';
 import 'package:flutter/material.dart';
 
 class Commonpage extends StatefulWidget {
@@ -9,11 +10,7 @@ class Commonpage extends StatefulWidget {
 
 class _CommonpageState extends State<Commonpage> {
   int index = 0;
-  final List<Widget> pages = [
-    
-    
-  
-  ];
+  final List<Widget> pages = [HomePage()];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
