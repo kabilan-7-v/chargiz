@@ -24,24 +24,75 @@ class _CommonpageState extends State<Commonpage> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               InkWell(
-                onTap: () {
-                  setState(() {
-                    index = 0;
-                  });
-                },
-                child: Column(
-                  children: [Icon(Icons.home), Text('Home')],
-                ),
-              ),
+                  onTap: () {
+                    setState(() {
+                      index = 0;
+                    });
+                  },
+                  child: index == 0
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                                height: 30,
+                                width: 30,
+                                child: Image.asset(
+                                  'assets/icon/homefill.png',
+                                )),
+                            Text(
+                              'Home',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                              SizedBox(
+                                  height: 30,
+                                  width: 30,
+                                  child: Image.asset(
+                                    'assets/icon/home.png',
+                                  )),
+                              Text(
+                                'Home',
+                              )
+                            ])),
               InkWell(
                 onTap: () {
                   setState(() {
                     index = 1;
                   });
                 },
-                child: Column(
-                  children: [Icon(Icons.location_on), Text('Home')],
-                ),
+                child: index == 1
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                              height: 30,
+                              width: 30,
+                              child: Image.asset(
+                                'assets/icon/locationfill.png',
+                              )),
+                          Text(
+                            'Map',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      )
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                            SizedBox(
+                                height: 30,
+                                width: 30,
+                                child: Image.asset(
+                                  'assets/icon/location.png',
+                                )),
+                            Text(
+                              'Map',
+                            )
+                          ]),
               ),
               InkWell(
                 onTap: () {
@@ -49,10 +100,36 @@ class _CommonpageState extends State<Commonpage> {
                     index = 2;
                   });
                 },
-                child: Column(
-                  children: [Icon(Icons.person), Text('Home')],
-                ),
-              )
+                child: index == 2
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                              height: 30,
+                              width: 30,
+                              child: Image.asset(
+                                'assets/icon/personfill.png',
+                              )),
+                          Text(
+                            'Profile',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      )
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                            SizedBox(
+                                height: 30,
+                                width: 30,
+                                child: Image.asset(
+                                  'assets/icon/person.png',
+                                )),
+                            Text(
+                              'Profile',
+                            )
+                          ]),
+              ),
             ],
           )),
     );
