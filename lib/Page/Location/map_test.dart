@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:chargiz/models/station_data_model.dart';
-import 'package:chargiz/nearby_stations.dart';
+import 'package:chargiz/Page/Location/nearby_stations.dart';
 import 'package:chargiz/services/common_services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as d;
@@ -11,14 +11,14 @@ import 'package:permission_handler/permission_handler.dart';
 
 const String googleApiKey = "AIzaSyCyzxOeCiFf7YszDASz1k0Mi6NnbsiO-5I";
 
-class MapTest extends StatefulWidget {
-  const MapTest({super.key});
+class LocationEVStation extends StatefulWidget {
+  const LocationEVStation({super.key});
 
   @override
-  State<MapTest> createState() => _MapTestState();
+  State<LocationEVStation> createState() => _LocationEVStationState();
 }
 
-class _MapTestState extends State<MapTest> {
+class _LocationEVStationState extends State<LocationEVStation> {
   GoogleMapController? mapController;
   LatLng? _currentPosition;
   Set<Marker> _markers = {};

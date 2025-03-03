@@ -1,5 +1,4 @@
 import 'package:chargiz/commonpage.dart';
-import 'package:chargiz/map_test.dart';
 import 'package:flutter/material.dart';
 
 void main() {

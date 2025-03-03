@@ -1,5 +1,5 @@
 import 'package:chargiz/Page/HomePage/home_page.dart';
-import 'package:chargiz/Page/Location/location_page.dart';
+import 'package:chargiz/Page/Location/map_test.dart';
 import 'package:chargiz/Page/ProfilePage/profile_page.dart';
 import 'package:flutter/material.dart';
 
@@ -12,11 +12,14 @@ class Commonpage extends StatefulWidget {
 
 class _CommonpageState extends State<Commonpage> {
   int index = 0;
-  final List<Widget> pages = [HomePage(), LocationPage(), ProfilePage()];
+  final List<Widget> pages = [HomePage(), LocationEVStation(), ProfilePage()];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: pages[index],
+      body: IndexedStack(
+        index: index,
+        children: pages,
+      ),
       bottomNavigationBar: Container(
           color: Colors.white,
           height: 60,
