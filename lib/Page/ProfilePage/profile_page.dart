@@ -101,6 +101,37 @@ class _ProfilePageState extends State<ProfilePage> {
                   borderRadius: BorderRadius.circular(15),
                   border: Border.all(),
                 ),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text("10 min"),
+                          ),
+                          Spacer(),
+                          Text("12.00 pm"),
+                          SizedBox(
+                            width: 8,
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text("Early Morning cruse"),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "114 Km",
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red),
+                        ),
+                      )
+                    ]),
               ),
             ),
             SizedBox(
@@ -114,6 +145,37 @@ class _ProfilePageState extends State<ProfilePage> {
                   borderRadius: BorderRadius.circular(15),
                   border: Border.all(),
                 ),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text("10 min"),
+                          ),
+                          Spacer(),
+                          Text("7.00 am"),
+                          SizedBox(
+                            width: 8,
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text("Early Morning cruse"),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "234 Km",
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red),
+                        ),
+                      )
+                    ]),
               ),
             ),
             SizedBox(
@@ -127,6 +189,37 @@ class _ProfilePageState extends State<ProfilePage> {
                   borderRadius: BorderRadius.circular(15),
                   border: Border.all(),
                 ),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text("17 min"),
+                          ),
+                          Spacer(),
+                          Text("5.00 pm"),
+                          SizedBox(
+                            width: 8,
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text("Early Morning cruse"),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "634 Km",
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red),
+                        ),
+                      )
+                    ]),
               ),
             ),
             SizedBox(
@@ -140,8 +233,39 @@ class _ProfilePageState extends State<ProfilePage> {
                   borderRadius: BorderRadius.circular(15),
                   border: Border.all(),
                 ),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text("12 min"),
+                          ),
+                          Spacer(),
+                          Text("6.00 am"),
+                          SizedBox(
+                            width: 8,
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text("Early Morning cruse"),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "134 Km",
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red),
+                        ),
+                      )
+                    ]),
               ),
-            )
+            ),
           ],
         ),
       ),
