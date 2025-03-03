@@ -1,5 +1,5 @@
 import 'package:chargiz/Page/HomePage/home_page.dart';
-import 'package:chargiz/Page/Location/map_test.dart';
+import 'package:chargiz/Page/Location/location_ev_station.dart';
 import 'package:chargiz/Page/ProfilePage/profile_page.dart';
 import 'package:flutter/material.dart';
 

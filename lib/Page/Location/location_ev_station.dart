@@ -143,7 +143,7 @@ class _LocationEVStationState extends State<LocationEVStation> {
       bottomNavigationBar: Container(
         height: 80,
         decoration: BoxDecoration(
-          border: Border.all(width: 0.5, color: Colors.grey),
+          border: Border(top: BorderSide(width: 0.5, color: Colors.grey)),
           color: Colors.white,
         ),
         child: Row(
