@@ -16,18 +16,17 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
+          backgroundColor: Colors.white,
           title: const Text('Chargiz'),
         ),
         drawer: DrawerPage(),
         body: Column(
           children: [
+            Expanded(child: O3D.asset(src: "assets/bike.glb")),
             SizedBox(
-                height: 400,
-                width: double.infinity,
-                child: O3D.asset(src: "assets/bike.glb")),
-            SizedBox(
-                height: 250,
+                height: 150,
                 child: SfRadialGauge(axes: <RadialAxis>[
                   RadialAxis(minimum: 0, maximum: 100, ranges: <GaugeRange>[
                     GaugeRange(startValue: 0, endValue: 25, color: Colors.red),
@@ -48,7 +47,8 @@ class _HomePageState extends State<HomePage> {
                         positionFactor: 0.5)
                   ])
                 ])),
-            Text("Battery Level")
+            Text("Battery Level"),
+            const SizedBox(height: 20),
           ],
         ));
   }
