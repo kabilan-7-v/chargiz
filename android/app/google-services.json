@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1004708441677",
+    "project_id": "chargiz",
+    "storage_bucket": "chargiz.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1004708441677:android:601395e2fb0e5a72567604",
+        "android_client_info": {
+          "package_name": "com.example.chargiz"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgnJhT_43SF2KaVfAaKjz31fMOwAWIHcA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1004708441677:android:82e7ebed6b1a5c42567604",
+        "android_client_info": {
+          "package_name": "com.example.chargiz_provider"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgnJhT_43SF2KaVfAaKjz31fMOwAWIHcA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
