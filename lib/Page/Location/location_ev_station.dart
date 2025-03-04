@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:chargiz/models/station_data_model.dart';
 import 'package:chargiz/Page/Location/nearby_stations.dart';
 import 'package:chargiz/services/common_services.dart';
+import 'package:chargiz/widgets/loader.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as d;
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class _LocationEVStationState extends State<LocationEVStation> {
   GoogleMapController? mapController;
   LatLng? _currentPosition;
   Set<Marker> _markers = {};
+  bool isLoading = false;
 
   List<StationDataModel> stationData = [];
 
@@ -66,39 +68,48 @@ class _LocationEVStationState extends State<LocationEVStation> {
   // Fetch 20 nearest EV charging stations
   Future<void> _fetchEVStations() async {
     if (_currentPosition == null) return;
-    showStatus("Locating free Charging Station..", context);
+    isLoading = true;
+    setState(() {});
+    //  showStatus("Locating free Charging Station..", context);
     final url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
         "?location=${_currentPosition!.latitude},${_currentPosition!.longitude}"
         "&radius=5000" // 5 km range
         "&type=charging_station"
         "&key=$googleApiKey";
 
-    final response = await http.get(Uri.parse(url));
-    d.log(response.statusCode.toString());
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      List results = data['results'];
-      d.log(results.length.toString());
-      for (var place in results) {
-        final lat = place['geometry']['location']['lat'];
-        final lng = place['geometry']['location']['lng'];
-        final name = place['name'];
-        final address = place['vicinity'];
+    try {
+      final response = await http.get(Uri.parse(url));
+      d.log(response.statusCode.toString());
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        List results = data['results'];
+        stationData.clear();
+        d.log(results.length.toString());
+        for (var place in results) {
+          final lat = place['geometry']['location']['lat'];
+          final lng = place['geometry']['location']['lng'];
+          final name = place['name'];
+          final address = place['vicinity'];
 
-        LatLng placeLocation = LatLng(lat, lng);
-        double distance =
-            await _calculateDistance(_currentPosition!, placeLocation);
-        stationData.add(StationDataModel(
-          name: name,
-          address: address,
-          distance: distance,
-          position: placeLocation,
-        ));
+          LatLng placeLocation = LatLng(lat, lng);
+          double distance =
+              await _calculateDistance(_currentPosition!, placeLocation);
+          stationData.add(StationDataModel(
+            name: name,
+            address: address,
+            distance: distance,
+            position: placeLocation,
+          ));
+        }
+        ////////////////////////////////////////////////////
+        stationData.sort((a, b) => a.distance.compareTo(b.distance));
+        addMarker(stationData[0]);
       }
-      ////////////////////////////////////////////////////
-      stationData.sort((a, b) => a.distance.compareTo(b.distance));
-      addMarker(stationData[0]);
+    } catch (e) {
+      //
     }
+    isLoading = false;
+    setState(() {});
   }
 
   void addMarker(StationDataModel stationData) {
@@ -154,44 +165,98 @@ class _LocationEVStationState extends State<LocationEVStation> {
               myLocationEnabled: true,
             ),
       bottomNavigationBar: Container(
-        height: 80,
+        height: (stationData.isNotEmpty) ? 150 : 80,
         decoration: BoxDecoration(
           border: Border(top: BorderSide(width: 0.5, color: Colors.grey)),
           color: Colors.white,
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue.shade200),
-              onPressed: _fetchEVStations,
-              child: Text(
-                'Locate',
-                style: TextStyle(color: Colors.black),
-              ),
-            ),
-            const SizedBox(width: 40),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue.shade200),
-              onPressed: () async {
-                if (stationData.isEmpty) {
-                  await _fetchEVStations();
-                }
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            NearbyStations(stationData: stationData)));
-              },
-              child: Text(
-                'Show nearby',
-                style: TextStyle(color: Colors.black),
-              ),
-            ),
-          ],
-        ),
+        child: isLoading
+            ? const Loader()
+            : (stationData.isNotEmpty)
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Chargiz Point',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w500)),
+                            GestureDetector(
+                                onTap: () {
+                                  stationData.clear();
+                                  _markers.clear();
+                                  setState(() {});
+                                },
+                                child: Icon(Icons.close)),
+                          ],
+                        ),
+                        const SizedBox(height: 5),
+                        Text(calculateTravelTime(stationData[0].distance),
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green)),
+                        const SizedBox(height: 5),
+                        Row(
+                          children: [
+                            Icon(Icons.location_on_outlined,
+                                color: Colors.red.shade700),
+                            const SizedBox(width: 6),
+                            Text(stationData[0].name,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                )),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 30),
+                          child: Text(stationData[0].address,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 13,
+                              )),
+                        ),
+                      ],
+                    ),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue.shade200),
+                        onPressed: _fetchEVStations,
+                        child: Text(
+                          'Locate',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                      const SizedBox(width: 40),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue.shade200),
+                        onPressed: () async {
+                          if (stationData.isEmpty) {
+                            await _fetchEVStations();
+                          }
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => NearbyStations(
+                                      stationData: stationData)));
+                        },
+                        child: Text(
+                          'Show nearby',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ],
+                  ),
       ),
     );
   }

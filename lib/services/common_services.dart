@@ -15,3 +15,19 @@ showStatus(String content, BuildContext context) {
     ),
   );
 }
+
+String calculateTravelTime(double distanceInKm) {
+  const double speedKmPerHour = 40.0;
+  double timeInHours = distanceInKm / speedKmPerHour;
+
+  int hours = timeInHours.floor();
+  int minutes = ((timeInHours - hours) * 60).ceil();
+
+  if (hours > 0 && minutes > 0) {
+    return "$hours hrs $minutes mins";
+  } else if (hours > 0) {
+    return "$hours hrs";
+  } else {
+    return "$minutes mins";
+  }
+}
