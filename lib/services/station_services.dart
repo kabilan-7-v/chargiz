@@ -4,6 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class StationServices {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  static Stream<QuerySnapshot<Map<String, dynamic>>> stationStream() {
+    return _firestore.collection('stations').snapshots();
+  }
+
   static Future<List<StationPortDataModel>> fetchAllPortsStatus() async {
     List<StationPortDataModel> allPorts = [];
 

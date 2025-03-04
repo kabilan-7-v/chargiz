@@ -25,6 +25,8 @@ class _LocationEVStationState extends State<LocationEVStation> {
   LatLng? _currentPosition;
   Set<Marker> _markers = {};
   bool isLoading = false;
+  bool _isFirstTimeStream = true;
+  int selectedStation = 0;
 
   List<StationDataModel> stationData = [];
 
@@ -67,10 +69,14 @@ class _LocationEVStationState extends State<LocationEVStation> {
   }
 
   // Fetch 20 nearest EV charging stations
-  Future<void> _fetchEVStations() async {
+  Future<void> _fetchEVStations({bool showLoading = true}) async {
+    d.log("calling");
     if (_currentPosition == null) return;
-    isLoading = true;
-    setState(() {});
+    if (showLoading) {
+      isLoading = true;
+      setState(() {});
+    }
+
     //  showStatus("Locating free Charging Station..", context);
     final url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
         "?location=${_currentPosition!.latitude},${_currentPosition!.longitude}"
@@ -122,6 +128,7 @@ class _LocationEVStationState extends State<LocationEVStation> {
                 a.estimatedTime)
             .compareTo(
                 calculateTimeInSeconds(b.distance).ceil() + b.estimatedTime));
+        selectedStation = 0;
         addMarker(stationData[0]);
       }
     } catch (e) {
@@ -191,75 +198,100 @@ class _LocationEVStationState extends State<LocationEVStation> {
         child: isLoading
             ? const Loader()
             : (stationData.isNotEmpty)
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 5),
-                        Row(
+                ? StreamBuilder(
+                    stream: StationServices.stationStream(),
+                    builder: (context, snapshots) {
+                      if (_isFirstTimeStream) {
+                        _isFirstTimeStream = false;
+                      }
+                      {
+                        _fetchEVStations(showLoading: false);
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Chargiz Point',
+                            const SizedBox(height: 5),
+                            Row(
+                              children: [
+                                Text('Chargiz Point',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500)),
+                                const Spacer(),
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  NearbyStations(
+                                                      stationData:
+                                                          stationData)));
+                                      // int? station = await Navigator.push(
+                                      //     context,
+                                      //     MaterialPageRoute(
+                                      //         builder: (context) =>
+                                      //             NearbyStations(
+                                      //                 stationData:
+                                      //                     stationData)));
+                                      // if (station != null) {
+                                      //   selectedStation = station;
+                                      //   setState(() {});
+                                      // }
+                                    },
+                                    child: Text(
+                                      "Show Nearby",
+                                      style: TextStyle(
+                                          fontSize: 14, color: Colors.blue),
+                                    )),
+                                GestureDetector(
+                                    onTap: () {
+                                      _isFirstTimeStream = true;
+                                      stationData.clear();
+                                      _markers.clear();
+                                      setState(() {});
+                                    },
+                                    child: Icon(Icons.close)),
+                              ],
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                                '${stationData[selectedStation].portName}: ${calculateTravelTime(stationData[selectedStation].distance)}',
                                 style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.w500)),
-                            const Spacer(),
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => NearbyStations(
-                                              stationData: stationData)));
-                                },
-                                child: Text(
-                                  "Show Nearby",
-                                  style: TextStyle(
-                                      fontSize: 14, color: Colors.blue),
-                                )),
-                            GestureDetector(
-                                onTap: () {
-                                  stationData.clear();
-                                  _markers.clear();
-                                  setState(() {});
-                                },
-                                child: Icon(Icons.close)),
-                          ],
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                            '${stationData[0].portName}: ${calculateTravelTime(stationData[0].distance)}',
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green)),
-                        const SizedBox(height: 5),
-                        Row(
-                          children: [
-                            Icon(Icons.location_on_outlined,
-                                color: Colors.red.shade700),
-                            const SizedBox(width: 6),
-                            Expanded(
-                              child: Text(stationData[0].name,
-                                  overflow: TextOverflow.ellipsis,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green)),
+                            const SizedBox(height: 5),
+                            Row(
+                              children: [
+                                Icon(Icons.location_on_outlined,
+                                    color: Colors.red.shade700),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(stationData[selectedStation].name,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                      )),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 30),
+                              child: Text(stationData[selectedStation].address,
                                   maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 13,
                                   )),
                             ),
                           ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 30),
-                          child: Text(stationData[0].address,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 13,
-                              )),
-                        ),
-                      ],
-                    ),
-                  )
+                      );
+                    })
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -285,6 +317,15 @@ class _LocationEVStationState extends State<LocationEVStation> {
                               MaterialPageRoute(
                                   builder: (context) => NearbyStations(
                                       stationData: stationData)));
+                          // int? station = await Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => NearbyStations(
+                          //             stationData: stationData)));
+                          // if (station != null) {
+                          //   selectedStation = station;
+                          //   setState(() {});
+                          // }
                         },
                         child: Text(
                           'Show nearby',
