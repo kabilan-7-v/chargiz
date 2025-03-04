@@ -31,7 +31,6 @@ class _NearbyStationsState extends State<NearbyStations> {
         itemCount: widget.stationData.length,
         itemBuilder: (context, index) {
           return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ListTile(
                 isThreeLine: true,
@@ -62,25 +61,50 @@ class _NearbyStationsState extends State<NearbyStations> {
                 trailing: Text(
                     "${widget.stationData[index].distance.toStringAsFixed(2)} km"),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 16.0),
-                child: SizedBox(
-                  width: 150,
-                  child: MaterialButton(
-                    shape: RoundedRectangleBorder(
-                        side: BorderSide(),
-                        borderRadius: BorderRadius.circular(7)),
-                    onPressed: () {},
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.payment),
-                        SizedBox(width: 10),
-                        Text("Book now"),
-                      ],
+              Row(
+                children: [
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: MaterialButton(
+                      color: Colors.blue,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(7)),
+                      onPressed: () {},
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.directions_outlined,
+                            color: Colors.white,
+                          ),
+                          SizedBox(width: 10),
+                          Text(
+                            "Get Direction",
+                            style: TextStyle(color: Colors.white),
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: MaterialButton(
+                      shape: RoundedRectangleBorder(
+                          side: BorderSide(),
+                          borderRadius: BorderRadius.circular(7)),
+                      onPressed: () {},
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.payment),
+                          SizedBox(width: 10),
+                          Text("Book now"),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                ],
               ),
               Divider()
             ],
