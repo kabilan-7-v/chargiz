@@ -31,3 +31,10 @@ String calculateTravelTime(double distanceInKm) {
     return "$minutes mins";
   }
 }
+
+double calculateTimeInSeconds(double distanceInKm) {
+  const double speedKmPerHour = 40.0;
+  double timeInHours = distanceInKm / speedKmPerHour;
+
+  return (timeInHours * 3600);
+}

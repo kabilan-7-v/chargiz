@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:chargiz/models/station_data_model.dart';
 import 'package:chargiz/Page/Location/nearby_stations.dart';
 import 'package:chargiz/services/common_services.dart';
+import 'package:chargiz/services/station_services.dart';
 import 'package:chargiz/widgets/loader.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as d;
@@ -76,7 +77,8 @@ class _LocationEVStationState extends State<LocationEVStation> {
         "&radius=5000" // 5 km range
         "&type=charging_station"
         "&key=$googleApiKey";
-
+    final stationServices = await StationServices.fetchAllPortsStatus();
+    //  d.log(stationServices.toString());
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
@@ -88,20 +90,38 @@ class _LocationEVStationState extends State<LocationEVStation> {
           final lng = place['geometry']['location']['lng'];
           final name = place['name'];
           final address = place['vicinity'];
-          d.log(name);
+          //   d.log(name);
 
           LatLng placeLocation = LatLng(lat, lng);
           double distance =
               await _calculateDistance(_currentPosition!, placeLocation);
-          stationData.add(StationDataModel(
-            name: name,
-            address: address,
-            distance: distance,
-            position: placeLocation,
-          ));
+          for (var station in stationServices) {
+            if (station.stationName == name) {
+              for (var port in station.ports.keys) {
+                final estimatedTime = station.ports[port];
+                stationData.add(StationDataModel(
+                  name: name,
+                  address: address,
+                  distance: distance,
+                  position: placeLocation,
+                  portName: port,
+                  estimatedTime: estimatedTime == null
+                      ? 0
+                      : estimatedTime
+                          .toDate()
+                          .difference(DateTime.now())
+                          .inSeconds,
+                ));
+              }
+              break;
+            }
+          }
         }
         ////////////////////////////////////////////////////
-        stationData.sort((a, b) => a.distance.compareTo(b.distance));
+        stationData.sort((a, b) => (calculateTimeInSeconds(a.distance).ceil() +
+                a.estimatedTime)
+            .compareTo(
+                calculateTimeInSeconds(b.distance).ceil() + b.estimatedTime));
         addMarker(stationData[0]);
       }
     } catch (e) {
@@ -163,7 +183,7 @@ class _LocationEVStationState extends State<LocationEVStation> {
               myLocationEnabled: true,
             ),
       bottomNavigationBar: Container(
-        height: (stationData.isNotEmpty) ? 150 : 80,
+        height: (stationData.isNotEmpty) ? 185 : 80,
         decoration: BoxDecoration(
           border: Border(top: BorderSide(width: 0.5, color: Colors.grey)),
           color: Colors.white,
@@ -176,13 +196,26 @@ class _LocationEVStationState extends State<LocationEVStation> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 5),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text('Chargiz Point',
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.w500)),
+                            const Spacer(),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => NearbyStations(
+                                              stationData: stationData)));
+                                },
+                                child: Text(
+                                  "Show Nearby",
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.blue),
+                                )),
                             GestureDetector(
                                 onTap: () {
                                   stationData.clear();
@@ -193,7 +226,8 @@ class _LocationEVStationState extends State<LocationEVStation> {
                           ],
                         ),
                         const SizedBox(height: 5),
-                        Text(calculateTravelTime(stationData[0].distance),
+                        Text(
+                            '${stationData[0].portName}: ${calculateTravelTime(stationData[0].distance)}',
                             style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -204,10 +238,14 @@ class _LocationEVStationState extends State<LocationEVStation> {
                             Icon(Icons.location_on_outlined,
                                 color: Colors.red.shade700),
                             const SizedBox(width: 6),
-                            Text(stationData[0].name,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                )),
+                            Expanded(
+                              child: Text(stationData[0].name,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                  )),
+                            ),
                           ],
                         ),
                         Padding(
