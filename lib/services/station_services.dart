@@ -8,6 +8,23 @@ class StationServices {
     return _firestore.collection('stations').snapshots();
   }
 
+  static Future<void> makePortBusy(
+      String stationId, String portId, Timestamp estimatedTime) async {
+    _firestore
+        .collection('stations')
+        .doc(stationId)
+        .collection("ports")
+        .doc(portId)
+        .set(
+      {"estimated_time": estimatedTime},
+      SetOptions(merge: true),
+    );
+    _firestore.collection('stations').doc(stationId).set(
+      {"last_updated": Timestamp.now()},
+      SetOptions(merge: true),
+    );
+  }
+
   static Future<List<StationPortDataModel>> fetchAllPortsStatus() async {
     List<StationPortDataModel> allPorts = [];
 
@@ -21,9 +38,11 @@ class StationServices {
           .collection('ports')
           .get();
       Map<String, Timestamp?> ports = {};
+      Map<String, String> portIds = {};
       for (var doc in portSnap.docs) {
         final name = doc.data()["name"];
         final estimatedTime = doc.data()["estimated_time"];
+        portIds[name] = doc.id;
         if (estimatedTime == null) {
           ports[name] = null;
         } else if (estimatedTime.toDate().isBefore(DateTime.now())) {
@@ -33,8 +52,11 @@ class StationServices {
           ports[name] = estimatedTime;
         }
       }
-      allPorts
-          .add(StationPortDataModel(stationName: stationName, ports: ports));
+      allPorts.add(StationPortDataModel(
+          stationName: stationName,
+          ports: ports,
+          stationId: stationData.id,
+          portId: portIds));
     }
     return allPorts;
   }
