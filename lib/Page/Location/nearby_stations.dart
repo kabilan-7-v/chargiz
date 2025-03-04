@@ -17,6 +17,7 @@ class _NearbyStationsState extends State<NearbyStations> {
     d.log(widget.stationData.length.toString());
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         shadowColor: Colors.transparent,
         backgroundColor: Colors.white,
@@ -29,29 +30,84 @@ class _NearbyStationsState extends State<NearbyStations> {
         scrollDirection: Axis.vertical,
         itemCount: widget.stationData.length,
         itemBuilder: (context, index) {
-          return ListTile(
-            isThreeLine: true,
-            shape: RoundedRectangleBorder(
-                side: BorderSide(color: Colors.grey, width: 0.5)),
-            tileColor: Colors.white,
-            //dense: true,
-            title: Text(widget.stationData[index].name),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                    '${widget.stationData[index].portName}: ${((calculateTimeInSeconds(widget.stationData[index].distance).ceil() + widget.stationData[index].estimatedTime) / 60).ceil()} mins',
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green)),
-                Text(widget.stationData[index].address),
-              ],
-            ),
+          return Column(
+            children: [
+              ListTile(
+                isThreeLine: true,
 
-            trailing: Text(
-                "${widget.stationData[index].distance.toStringAsFixed(2)} km"),
+                tileColor: Colors.white,
+                //dense: true,
+                title: Text(widget.stationData[index].name),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '${widget.stationData[index].portName}: ${((calculateTimeInSeconds(widget.stationData[index].distance).ceil() + widget.stationData[index].estimatedTime) / 60).ceil()} mins (${widget.stationData[index].estimatedTime <= 0 ? "Available" : "Busy"})',
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: widget.stationData[index].estimatedTime <= 0
+                              ? Colors.green
+                              : Colors.red),
+                    ),
+                    if (widget.stationData[index].estimatedTime > 0)
+                      Text(
+                          "Available in ${(widget.stationData[index].estimatedTime / 60).ceil()} mins"),
+                    Text(widget.stationData[index].address),
+                  ],
+                ),
+
+                trailing: Text(
+                    "${widget.stationData[index].distance.toStringAsFixed(2)} km"),
+              ),
+              Row(
+                children: [
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: MaterialButton(
+                      color: Colors.blue,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(7)),
+                      onPressed: () {},
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.directions_outlined,
+                            color: Colors.white,
+                          ),
+                          SizedBox(width: 10),
+                          Text(
+                            "Get Direction",
+                            style: TextStyle(color: Colors.white),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: MaterialButton(
+                      shape: RoundedRectangleBorder(
+                          side: BorderSide(),
+                          borderRadius: BorderRadius.circular(7)),
+                      onPressed: () {},
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.payment),
+                          SizedBox(width: 10),
+                          Text("Book now"),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                ],
+              ),
+              Divider()
+            ],
           );
         },
       ),
