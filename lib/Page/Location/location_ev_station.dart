@@ -106,6 +106,8 @@ class _LocationEVStationState extends State<LocationEVStation> {
               for (var port in station.ports.keys) {
                 final estimatedTime = station.ports[port];
                 stationData.add(StationDataModel(
+                  stationId: station.stationId,
+                  portId: station.portId[port]!,
                   name: name,
                   address: address,
                   distance: distance,

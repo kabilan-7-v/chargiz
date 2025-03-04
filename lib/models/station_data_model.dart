@@ -7,6 +7,8 @@ class StationDataModel {
   final LatLng position;
   final String portName;
   final int estimatedTime;
+  final String stationId;
+  final String portId;
 
   StationDataModel({
     required this.name,
@@ -15,5 +17,7 @@ class StationDataModel {
     required this.position,
     required this.portName,
     required this.estimatedTime,
+    required this.stationId,
+    required this.portId,
   });
 }
