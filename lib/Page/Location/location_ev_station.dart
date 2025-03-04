@@ -34,10 +34,21 @@ class _LocationEVStationState extends State<LocationEVStation> {
   // Fetch user's current location
   Future<void> _getCurrentLocation() async {
     var status = await Permission.location.request();
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        showStatus(
+            "GPS servic permission is disabled. Please enable it.", context);
+        return;
+      }
+    }
+
     if (!status.isGranted) {
       return;
     }
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    d.log(serviceEnabled.toString());
     if (!serviceEnabled) {
       print("Location services are disabled.");
       return;
@@ -49,6 +60,7 @@ class _LocationEVStationState extends State<LocationEVStation> {
     setState(() {
       _currentPosition = LatLng(position.latitude, position.longitude);
     });
+    d.log("current location fetched");
   }
 
   // Fetch 20 nearest EV charging stations
@@ -132,6 +144,7 @@ class _LocationEVStationState extends State<LocationEVStation> {
                 mapController!.animateCamera(CameraUpdate.newCameraPosition(
                   CameraPosition(target: _currentPosition!, zoom: 14),
                 ));
+                d.log("map created");
               },
               initialCameraPosition: CameraPosition(
                 target: _currentPosition!,
