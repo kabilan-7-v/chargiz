@@ -79,17 +79,16 @@ class _LocationEVStationState extends State<LocationEVStation> {
 
     try {
       final response = await http.get(Uri.parse(url));
-      d.log(response.statusCode.toString());
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         List results = data['results'];
         stationData.clear();
-        d.log(results.length.toString());
         for (var place in results) {
           final lat = place['geometry']['location']['lat'];
           final lng = place['geometry']['location']['lng'];
           final name = place['name'];
           final address = place['vicinity'];
+          d.log(name);
 
           LatLng placeLocation = LatLng(lat, lng);
           double distance =
@@ -140,7 +139,6 @@ class _LocationEVStationState extends State<LocationEVStation> {
           end.longitude,
         ) /
         1000; // Convert to KM
-    d.log(distance.toString());
     return distance;
   }
 
