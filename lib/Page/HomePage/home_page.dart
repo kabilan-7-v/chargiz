@@ -10,8 +10,31 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   O3DController controller = O3DController();
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  late Animation<Offset> _slideAnimation;
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _animation = Tween<double>(begin: 0.2, end: 1.0).animate(_controller);
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero)
+            .animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +43,61 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           title: const Text('Chargiz'),
+          actions: [
+            FadeTransition(
+              opacity: _animation,
+              child: SlideTransition(
+                position: _slideAnimation,
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.circle,
+                      color: Colors.red,
+                      size: 12,
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    const Text(
+                      "disconnected",
+                      style: TextStyle(fontSize: 14, color: Colors.red),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(
+              width: 30,
+            )
+          ],
         ),
         drawer: DrawerPage(),
         body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Align(
+                alignment: Alignment.bottomLeft,
+                child: Text(
+                  "Your",
+                  style: TextStyle(
+                      fontSize: 24,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: FadeTransition(
+                opacity: _animation,
+                child: const Text(
+                  "Chargiz",
+                  style: TextStyle(fontSize: 34, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
             Expanded(child: O3D.asset(src: "assets/bike.glb")),
             SizedBox(
                 height: 150,
@@ -38,16 +112,23 @@ class _HomePageState extends State<HomePage> {
                     NeedlePointer(value: 90)
                   ], annotations: <GaugeAnnotation>[
                     GaugeAnnotation(
-                        widget: SizedBox(
-                            child: Text('90.0 %',
-                                style: TextStyle(
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold))),
+                        widget: Column(
+                          children: [
+                            SizedBox(
+                                child: Text('90.0 %',
+                                    style: TextStyle(
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold))),
+                          ],
+                        ),
                         angle: 90,
-                        positionFactor: 0.5)
+                        positionFactor: 1.8)
                   ])
                 ])),
-            Text("Battery Level"),
+            SizedBox(
+              height: 16,
+            ),
+            Center(child: Text("Battery Level")),
             const SizedBox(height: 20),
           ],
         ));
