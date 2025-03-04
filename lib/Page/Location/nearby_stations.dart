@@ -69,7 +69,51 @@ class _NearbyStationsState extends State<NearbyStations> {
                     color: Colors.blue,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(7)),
-                    onPressed: () {},
+                    onPressed: () {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (context) {
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 30, left: 20, bottom: 20),
+                                  child: Text("Are you sure want to continue ?",
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold)),
+                                ),
+                                SizedBox(height: 20),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: MaterialButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text("No",
+                                            style: TextStyle(fontSize: 18)),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: MaterialButton(
+                                        onPressed: () async {
+                                          //code here
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text("Yes",
+                                            style: TextStyle(fontSize: 18)),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 20),
+                              ],
+                            );
+                          });
+                    },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
